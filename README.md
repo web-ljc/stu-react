@@ -69,3 +69,60 @@
                 yarn add http-proxy-middleware
 
     + 更改运行命令的env，需要安装[cross-env](https://blog.csdn.net/weixin_45249263/article/details/123719280)
+
+##### 0717
+1. JSX构建视图的基础知识
+    - JSX：javascript and xml(html) 把JS和HTML标签混合在一起，并不是字符串拼接
+        - vscode如何支持JSX语法[格式化、 快捷提示...]
+            + 创建js文件，把后缀名设置为jsx，js文件中就可以支持jsx语法了
+            + webpack打包的规则中，也会对.jsx这种文件，按照JS的方式进行处理
+        - 在HTML中嵌入`JS表达式`，需要基于`{}`语法
+            + JS表达式：执行有结果的。
+                1. 变量/值 {a}
+                2. 数学运算 {1+1} {x+y}
+                3. 判断:三元运算符 {a ? '2' : '3'}
+                4. 循环:借助于数组的迭代方法处理，map
+        - 在ReactDOM.createRoot()的时候，不能把html/body作为根容器，需要制定一个额外的盒子
+        - 每一个构建的视图，只能有一个“根结点”
+            + 出现多个根结点会报错
+            + React给我们提供了一个特殊的节点（标签）：React.Fragment 空文档标记标签
+                + <></> 即保证了一个根节点，也不会增加一个HTML层级结构
+        - {}胡子语法中嵌入不同的值，所呈现出来的特点
+            + number/string：值是什么就渲染什么
+            + boolean/null/undefined/Symbol/BigInt：渲染的内容是空
+            + 除数组对象外，其余对象一般都不支持在{}中进行渲染，但也有特殊情况
+                - JSX虚拟DOM对象
+                - 给元素设置style行内样式，要求必须写成一个对象格式
+            + 数组对象：把数组的每一项都分别拿出来渲染，并不是变成字符串渲染，中间没有逗号
+            + 函数对象：不支持在{}中渲染，但是可以作为函数组件，用<Component/>方式渲染
+        - 给元素设置样式
+            + 行内样式:需要基于对象的格式处理，直接写样式字符串会报错
+                ```js
+                    <h2
+                        className='box'
+                        style={{
+                            color: 'red',
+                            fontSize: '30px' // 样式属性要基于驼峰命名法
+                        }}
+                    >我在学习React</h2>
+                ```
+            + 设置样式类名：需要把class替换为className
+
+        - 命名规范
+            - 小驼峰 camelCase 首字母小写，其余每一个有意义单词大写
+            - 大驼峰 PascalCase 首字母都大写
+            - kabab-case
+        - 数组
+            - 每一项为empty的数组，为稀疏数组，不能使用迭代方法forEach map
+            - 每一项不为empty的数组，为密集数组
+
+    - index.js
+        ```js
+            import React from 'react'; // React语法核心
+            import ReactDOM from 'react-dom/client'; // 构建HTML(webapp)的核心
+            const root = ReactDOM.createRoot(document.getElementById('root')) // 获取页面中#root的容器，作为‘根’容器
+            // 基于render方法渲染编写的视图，把渲染后的内容，全部插入到#root中进行渲染
+            root.render(
+                ...
+            )
+        ```
