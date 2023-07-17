@@ -24,3 +24,29 @@
 
     - eslintConfig 对webpack中Eslint词法检查的相关配置
     - browserslist 设置浏览器兼容，编译软件会针对编译
+
+3. 执行yarn eject显示webpack打包配置
+    - 新增config文件夹，包含webpack的配置文件
+        - webpack-dev-server的配置
+        - 脚手架默认webpack打包规则配置
+        - 路径管理配置
+    - 新增script文件，执行命令入口文件,
+    - 更改package.json，将编译包重新安装，且没有eject命令，暴露后不可还原
+
+    + 常见的配置修改
+        + 把sass改为less / module
+            yarn add less less-loader@8
+            yarn remove sass-loader
+        + 配置别名 / resolve
+        + 更改项目访问ip / scripts/start.js
+        + 修改浏览器兼容 / package.json/browserslist
+            - 对postcss-loader生效：控制css3前缀
+            - 对babel-loader生效：控制ES6的转换
+            - 但无法处理ES6内置API的兼容，需要@babel/polyfill对常见内置API的重写
+            - 脚手架中安装了react-app-polyfill，不需手动安装babel-polyfill
+        + 处理Proxy跨域
+            - 在src目录新建 setupProxy.js
+            - 安装http-proxy-middleware:实现跨域代理的模块，webpack-dev-sever的跨域代理原理，也是基于它完成
+                yarn add http-proxy-middleware
+
+    + 更改运行命令的env，需要安装[cross-env](https://blog.csdn.net/weixin_45249263/article/details/123719280)
