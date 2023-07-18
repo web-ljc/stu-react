@@ -4,7 +4,7 @@
     - 17版本：语法没变，底层机制变了
     - 18版本：新版本[语法和机制上都有区别]
 
-##### 0716
+##### 04
 2. React框架采用的是MVC体系，Vue框架采用的是MVVM体系
     - MVC：Model数据层 + View视图层 + controller控制层
         - 构建视图：React中基于jsx语法来构建视图
@@ -23,7 +23,7 @@
         - setState修改状态同时通知视图渲染
         - forceUpdate通知视图强制更新
 
-##### 0715
+##### 0203
 1. 搭建react项目使用官方脚手架: create-react-app
     + [`脚手架`](http://www.baidu.com): 基于它创建项目，默认就把webpack的打包规则已经处理好，把一些项目基本内容创建好。
     + 基础使用create-react-app
@@ -70,7 +70,7 @@
 
     + 更改运行命令的env，需要安装[cross-env](https://blog.csdn.net/weixin_45249263/article/details/123719280)
 
-##### 0717
+##### 0506
 1. JSX构建视图的基础知识
     - JSX：javascript and xml(html) 把JS和HTML标签混合在一起，并不是字符串拼接
         - vscode如何支持JSX语法[格式化、 快捷提示...]
@@ -126,3 +126,57 @@
                 ...
             )
         ```
+
+##### 0708
+1. 关于JSX底层处理机制
+    1. 把编写的JSX语法，编译为虚拟DOM对象[virtualDOM]
+        - 虚拟DOM对象：框架内部构建的一套对象体系（对象的相关成员都是React内部规定的）,基于这些属性描述出，我们所构建视图中的DOM节点的相关特征
+            1. 基于babel-preset-react-app 把JSX编译为 React.createElement(...) 格式
+                * 只要是元素节点，必然会基于createElement进行处理
+                    + React.createElement(ele, props, ...children)
+                    + ele：元素标签名、或组件
+                    + props：元素的属性集合，如果没有设置过任何属性，则值是null
+                    + children：第三个及以后的参数，都是当前元素的字节点
+                    ```js
+                        // 经babel编译后 
+                        React.createElement(
+                            "React.Fragment",
+                            null,
+                            React.createElement(
+                                "h2",
+                                { className: "title", style: styObj }, 
+                                "\u5B66\u4E60React"
+                            ),
+                            React.createElement(
+                                "div",
+                                { className: "box" },
+                                React.createElement("span", null, x), 
+                                React.createElement("span", null, y)
+                            )
+                        );
+                    ```
+            2. 再执行 createElement 方法，创建出 virtualDOM 虚拟DOM对象[JSX元素、 JSX对象、 ReactChild对象]
+                ```js
+                    virtualDOM = {
+                        $$typeof: Symbol(react.element),
+                        ref: null,
+                        key: null,
+                        type: '标签名或组件',
+                        props: { // 存储了元素的相关属性 & 字节点信息
+                            childeren: [] || '', // 没子节点没有这个属性，一个直接展示，多个内容数组
+                            id,                  // 属性
+                            ...
+                        }
+                    }
+                ```
+
+    2. 把构建的virtualDOM渲染为真实DOM
+        - 真是DOM：浏览器页面中，最后渲染出来，让用户看见的DOM元素
+    3. 补充：第一次渲染页面是直接从virtualDOM -- 真实DOM；但是后期视图更新的时候，需要经过一个DOM-DIFF的对比，计算出补丁包PATCH，两次视图差异部分，把PATCH补丁包进行渲染
+        - 第一次渲染完毕后，会把创建的virtualDOM缓存起来 -- oldVirtualDOM
+        - 数据更新后，视图重新渲染，按照最新的数据，把JSX重新编译为“全新的virtualDOM”全部重新编译一遍，新的虚拟DOM对象
+        - 拿新的虚拟DOM和之前缓存的虚拟DOM进行对比 DOM-DIFF算法，生成PATCH补丁包。例如：只有x部分变化
+        - 最后只渲染补丁包PATCH
+
+2. 打包编译
+    - [babel](https://babeljs.io/repl#)

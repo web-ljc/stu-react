@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@/index.less';
+import { createElement } from './jsxHandle';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -89,7 +90,63 @@ class DataList extends React.Component {
     }
 }
 
+class DataRender extends React.Component {
+    // 渲染机制
+    state = {
+        x: 10,
+        y: 20
+    }
+    render() {
+        let styObj = {
+            color: 'red',
+            fontSize: '40px'
+        },
+        {x, y} = this.state
 
+        console.log(React.createElement(
+            "React.Fragment",
+            null,
+            React.createElement(
+                "h2",
+                { className: "title", style: styObj }, 
+                "\u5B66\u4E60React"
+            ),
+            React.createElement(
+                "div",
+                { className: "box" },
+                React.createElement("span", null, x), 
+                React.createElement("span", null, y)
+            )
+        ));
+        // console.log(createElement(
+        //     "React.Fragment",
+        //     null,
+        //     createElement(
+        //         "h2",
+        //         { className: "title", style: styObj }, 
+        //         "\u5B66\u4E60React"
+        //     ),
+        //     createElement(
+        //         "div",
+        //         { className: "box" },
+        //         createElement("span", null, x), 
+        //         createElement("span", null, y)
+        //     )
+        // ));
+        
+        return (
+            <>
+                <h2 className='title' style={styObj}>学习React</h2>
+                <div className="box">
+                    <span>{x}</span>
+                    <span>{y}</span>
+                </div>
+                {/* 可嵌入jsx元素对象 */}
+                { React.createElement('button', { id: '1' }, '提交') }
+            </>
+        )
+    }
+}
 
 root.render(
     <>
@@ -97,6 +154,7 @@ root.render(
         <H2 />
         <DataHiddle />
         <DataList />
+        <DataRender />
     </>
 );
 
