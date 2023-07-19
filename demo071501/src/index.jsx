@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@/index.less';
-import { createElement } from './jsxHandle';
+import { createElement, render } from './jsxHandle';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -133,7 +133,7 @@ class DataRender extends React.Component {
         //         createElement("span", null, y)
         //     )
         // ));
-        
+
         return (
             <>
                 <h2 className='title' style={styObj}>学习React</h2>
@@ -148,15 +148,32 @@ class DataRender extends React.Component {
     }
 }
 
-root.render(
-    <>
-        <Number/>
-        <H2 />
-        <DataHiddle />
-        <DataList />
-        <DataRender />
-    </>
-);
+// root.render(
+//     <>
+//         <Number/>
+//         <H2 />
+//         <DataHiddle />
+//         <DataList />
+//         <DataRender />
+//     </>
+// );
+
+const jsxObj = createElement(
+    "div",
+    {className: 'contianer'},
+    createElement(
+        "h2",
+        { className: "title", style: {fontSize: '20px'} },
+        "\u5B66\u4E60React"
+    ),
+    createElement(
+        "div",
+        { className: "box" },
+        createElement("span", null, 10),
+        createElement("span", null, '20')
+    )
+)
+render(jsxObj, document.getElementById('root'))
 
 fetch('/jian/subscriptions/recommended_collections')
 .then(response => response.json())
