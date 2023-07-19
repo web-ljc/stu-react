@@ -157,8 +157,8 @@ root.render(
         <DataList />
         <DataRender />
         <DemoFunction title="函数组件" className="box" data={[100, 200]} style={{fontSize: '20px'}}>
-            <span>字节点一</span>
-            <span>字节点二</span>
+            <span slot="footer">我是页脚</span>
+            <span slot="header">我是页眉</span>
         </DemoFunction>
         <DemoFunction title={11} />
     </>
