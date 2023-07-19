@@ -156,10 +156,11 @@ root.render(
         <DataHiddle />
         <DataList />
         <DataRender />
-        <DemoFunction title="函数组件" className="box" data={[100, 200]}>
+        <DemoFunction title="函数组件" className="box" data={[100, 200]} style={{fontSize: '20px'}}>
             <span>字节点一</span>
             <span>字节点二</span>
         </DemoFunction>
+        <DemoFunction title={11} />
     </>
 );
 
@@ -189,3 +190,15 @@ console.log(React.createElement(DemoFunction, {
 fetch('/jian/subscriptions/recommended_collections')
 .then(response => response.json())
 .then(value => console.log(value))
+
+
+let obj = {
+    x: 10,
+    y: 20
+}
+Object.freeze(obj)
+// obj.x = 100
+// obj.z = 200
+// delete obj.y
+console.log(Object.isFrozen(obj), obj);
+

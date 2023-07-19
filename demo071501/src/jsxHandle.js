@@ -111,6 +111,6 @@ export const render = (virtualDOM, container) => {
         container.appendChild(ele)
     }
     if (typeof type === 'function') {
-        type(props)
+        type(Object.freeze(props))
     }
 }

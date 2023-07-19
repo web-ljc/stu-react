@@ -192,7 +192,7 @@
     - [babel](https://babeljs.io/repl#)
 
 
-##### 09
+##### 0910
 1. 函数组件的底层渲染机制
     - Vue中的组件开发
         1. 全局组件和局部组件
@@ -239,7 +239,50 @@
                     - 把函数执行 -- DemoFunction()
                     - 把virtualDOM中的props，作为实参传递给函数 -- DemoFunction(props)
                     - 接收函数执行的返回结果【也就是当前组件的virtualDOM对象】
-                    - 最后基于render吧组件返回的虚拟DOM变为真实DOM，插入到#root容器中
+                    - 最后基于render把组件返回的虚拟DOM变为真实DOM，插入到#root容器中
+            - 属性props的处理
+                1. 调用组件，传递进来的属性是只读的【原理：props对象被冻结了】 Object.freeze(props)
+                    - 获取：props.xxx
+                    - 修改：props.xxx = yyy => 报错
+                        - 如果就要修改传递的属性值，可以将传递的属性值赋给一个变量，更改变量
+                2. 作用：父组件调用子组件的时候，可以基于属性，把不同的信息传递给子组件，子组件接收相应的属性值，呈现不同的效果，让组件的复用性更强
+                3. 虽然对于传递的属性不能直接修改，但是可以做规则校验
+                    - 设置默认值
+                        ```js
+                            DemoFunction.defaultProps = {
+                                title: ''
+                            }
+                        ```
+                    - 设置其它规则，例如：数据值格式、是否必传。【必须依赖官方的一个插件：prop-typs】
+                        - 传递进来的属性，首先会经历规则校验，不管校验成功还是失败，都会把属性传递给props，只不过如果不符合设定的规则，控制台会抛出警告错误，不影响取值
+                         ```js
+                            import PropTypes from "prop-types"
+                            函数组件.propTypes = {
+                                // 类型是字符串、必填
+                                title: PropTypes.string.isRequired,
+                                // 多种校验规则中的一个
+                                x: PropTypes.oneOfType([
+                                    PropTypes.string,
+                                    PropTypes.number,
+                                ])
+                                ...
+                            }
+                        ```
 
         2. 类组件
         3. Hooks组件：在函数组件中使用React Hooks函数
+
+2. 关于对象的规则设置
+    + 冻结
+        - 冻结对象：Object.freeze(obj)
+        - 检测是否冻结：Object.isFrozen(obj) => true / false
+        - 被冻结的对象，不能修改成员值，不能新增成员，不能删除成员、不能给成员做劫持
+    + 密封
+        - 密封对象：Object.seal(obj)
+        - 检测是否被密封：Object.isSealed(obj)
+        - 被密封的对象：可以修改成员的值，但不能删除、不能新增、不能劫持
+    + 不可扩展
+        - 把对象设置为不可扩展：Object.preventExtensions(obj)
+        - 检测是否可扩展：Object.isExtensible(obj)
+        - 被设置不可扩展的对象：除了不能新增成员、其余的操作都可以
+    + 被冻结的对象，即使不可扩展，也是密封的
