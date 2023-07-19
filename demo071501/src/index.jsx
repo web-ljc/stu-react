@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import '@/index.less';
 import { createElement, render } from './jsxHandle';
 import DemoFunction from '@/views/DemoFunction';
+import Dialog from '@/components/Dialog';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -161,6 +162,10 @@ root.render(
             <span slot="header">我是页眉</span>
         </DemoFunction>
         <DemoFunction title={11} />
+        <Dialog title="友情提示" content="注意防晒" />
+        <Dialog>
+            <button>确定</button>
+        </Dialog>
     </>
 );
 
