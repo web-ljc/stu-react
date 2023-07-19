@@ -190,3 +190,56 @@
 
 2. 打包编译
     - [babel](https://babeljs.io/repl#)
+
+
+##### 09
+1. 函数组件的底层渲染机制
+    - Vue中的组件开发
+        1. 全局组件和局部组件
+        2. 函数组件和类组件【vue3不具备函数组件】
+
+    - React中的组件开发
+        - 没有明确全局和局部的概念【可以理解为都是局部组件，不过可以把组件注册到react上，这样每个组件只要导入React即可使用】
+        1. 函数组件
+            - 创建：在src目录中，创建一个xxx.jsx的文件，就是要创建一个组件；我们在文件中，创建一个函数，让函数返回JSX视图【或者JSX元素、virtualDOM虚拟DOM对象】，这就是创建了一个函数组件。
+            - 调用：基于ES6Module规范，导入创建的组件【可以忽略.jsx后缀名】，然后像写标签一样调用
+                - 单闭合调用： <Component />
+                - 双闭合调用: <Component>...</Component>
+                    - 可以传递子节点，在传递给函数的props中，有一个children属性，存储子节点
+            - 命名：组件的名字，PascalCase格式
+            - 调用组件的时候，可以给调用的组件设置各种属性
+                <!-- <DemoFunction title="函数组件" className="box" data={[100, 200]} /> -->
+                + 如果设置的属性值不是字符串格式，需要基于“{}胡子语法”进行嵌套
+                + 调用组件的时候，可以把一些数据/信息基于属性props的方式，传递给组件
+            - 渲染机制
+                1. 基于babel-perset-react-app把调用的组件转换为createElement格式
+                    ```js
+                        React.createElement(DemoFunction, {
+                            title: "\u51FD\u6570\u7EC4\u4EF6",
+                            className: "box",
+                            data: [100, 200]
+                        })
+                    ```
+                2. 把createElement方法执行，创建出一个virtualDOM对象
+                    ```js
+                        {
+                            $$typeof: Symbol(react.element),
+                            key: null,
+                            ref: null,
+                            props: { // 如果有子节点也包含children
+                                title: "\u51FD\u6570\u7EC4\u4EF6",
+                                className: "box",
+                                data: [100, 200]
+                            },
+                            type: DemoFunction
+                        }
+                    ```
+                3. 基于root.render把virtualDOM变为真实DOM
+                    - type值不再是一个字符串，是一个函数
+                    - 把函数执行 -- DemoFunction()
+                    - 把virtualDOM中的props，作为实参传递给函数 -- DemoFunction(props)
+                    - 接收函数执行的返回结果【也就是当前组件的virtualDOM对象】
+                    - 最后基于render吧组件返回的虚拟DOM变为真实DOM，插入到#root容器中
+
+        2. 类组件
+        3. Hooks组件：在函数组件中使用React Hooks函数

@@ -110,4 +110,7 @@ export const render = (virtualDOM, container) => {
         // 新增标签，增加到指定容器
         container.appendChild(ele)
     }
+    if (typeof type === 'function') {
+        type(props)
+    }
 }

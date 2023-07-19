@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '@/index.less';
 import { createElement, render } from './jsxHandle';
+import DemoFunction from '@/views/DemoFunction';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -148,32 +149,42 @@ class DataRender extends React.Component {
     }
 }
 
-// root.render(
-//     <>
-//         <Number/>
-//         <H2 />
-//         <DataHiddle />
-//         <DataList />
-//         <DataRender />
-//     </>
-// );
+root.render(
+    <>
+        <Number/>
+        <H2 />
+        <DataHiddle />
+        <DataList />
+        <DataRender />
+        <DemoFunction title="函数组件" className="box" data={[100, 200]}>
+            <span>字节点一</span>
+            <span>字节点二</span>
+        </DemoFunction>
+    </>
+);
 
-const jsxObj = createElement(
-    "div",
-    {className: 'contianer'},
-    createElement(
-        "h2",
-        { className: "title", style: {fontSize: '20px'} },
-        "\u5B66\u4E60React"
-    ),
-    createElement(
-        "div",
-        { className: "box" },
-        createElement("span", null, 10),
-        createElement("span", null, '20')
-    )
-)
-render(jsxObj, document.getElementById('root'))
+// const jsxObj = createElement(
+//     "div",
+//     {className: 'contianer'},
+//     createElement(
+//         "h2",
+//         { className: "title", style: {fontSize: '20px'} },
+//         "\u5B66\u4E60React"
+//     ),
+//     createElement(
+//         "div",
+//         { className: "box" },
+//         createElement("span", null, 10),
+//         createElement("span", null, '20')
+//     )
+// )
+// render(jsxObj, document.getElementById('root'))
+
+console.log(React.createElement(DemoFunction, {
+    title: "\u51FD\u6570\u7EC4\u4EF6",
+    className: "box",
+    data: [100, 200]
+}));
 
 fetch('/jian/subscriptions/recommended_collections')
 .then(response => response.json())
