@@ -4,6 +4,7 @@ import '@/index.less';
 import { createElement, render } from './jsxHandle';
 import DemoFunction from '@/views/DemoFunction';
 import Dialog from '@/components/Dialog';
+import Vote from '@/views/Vote';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -166,6 +167,7 @@ root.render(
         <Dialog>
             <button>确定</button>
         </Dialog>
+        <Vote title="投票组件" />
     </>
 );
 
