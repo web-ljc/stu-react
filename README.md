@@ -201,12 +201,19 @@
     - React中的组件开发
         - 没有明确全局和局部的概念【可以理解为都是局部组件，不过可以把组件注册到react上，这样每个组件只要导入React即可使用】
         1. 函数组件
+            + 第一次渲染完后，无法基于“内部的某些操作”让组件更新【无法实现自更新】，但是调用它的父组件更新了，那么相关的子组件也一定会更新。【可能传递最新的属性值过来】
+            + 函数组件具备：属性...【其它状态等内容几乎没有】
+            + 优势：比类组件处理的机制简单，渲染速度更快
         2. 类组件
+            + 组件在第一次渲染完后，除了父组件更新可以触发其更新外，也可以基于组件内部的某些操作，让组件可以更新
+            + 具备：属性、状态、周期函数、ref...【几乎组件应该有的东西都具备】
+            + 优势：功能强大
         3. Hooks组件：在函数组件中使用React Hooks函数
+            + 具备了函数组件+类组件各自的优势，在函数组件的基础上，基于hooks函数，让函数组件拥有状态、周期函数等，让函数组件也可以自更新【动态化】
 
     - 静态组件和动态组件
-        - 函数组件是静态组件：第一次渲染完后就不再变化，除非父组件控制重新渲染
-        - 动态组件：基于组件内部的某些操作，让组件可以更新，有类组件、Hooks组件
+        - 函数组件是静态组件：第一次渲染完后，无法基于“内部的某些操作”让组件更新【无法实现自更新】，但是调用它的父组件更新了，那么相关的子组件也一定会更新。【可能传递最新的属性值过来】
+        - 动态组件：组件在第一次渲染完后，除了父组件更新可以触发其更新外，也可以基于组件内部的某些操作，让组件可以更新，有类组件、Hooks组件
 
     - 函数组件
         - 创建：在src目录中，创建一个xxx.jsx的文件，就是要创建一个组件；我们在文件中，创建一个函数，让函数返回JSX视图【或者JSX元素、virtualDOM虚拟DOM对象】，这就是创建了一个函数组件。
@@ -328,7 +335,7 @@
                 + 同样this.props获取的属性对象也是被冻结的 Object.isFrozen(this.props)
             + 规则校验
                 static defaultProps={}
-                static propType={}
+                static propTypes={}
 
         2. 初始化状态
             + 状态：后期修改状态，可以触发视图的更新
@@ -343,7 +350,7 @@
                     partialState: 部分状态
                     this.setState({xxx: xxx})
                 2. this.forceUpdate() 强制更新
-        
+
         3. 触发 componentWillMount 周期函数（钩子函数）：组件第一次渲染之前
             钩子函数：在程序运行到某个阶段，可以基于提供一个处理函数，让开发者在这一阶段做一些自定义的事情
             + 此周期函数是不安全的，【虽然可以用，未来可能被移除，所以不建议使用】
@@ -352,8 +359,57 @@
                 + React.StrictMode / "use strict"
                 + "use strict":JS的严格模式
                 + React.StrictMode:React的严格模式，会检查React中一些不规范的语法、或者是不建议使用的API
-        
+
         4. 触发 render 周期函数：渲染
 
         5. 触发 componentDidMount 周期函数：第一次渲染完毕
             + 已经把virtualDOM变为真实DOM【可以获取真实DOM】
+
+    - 组件更新的逻辑【当修改了相关状态，组件会更新】
+        1. 触发 shouldComponentUpdate 周期函数：是否允许更新
+            shouldComponentUpdate(nextProps, nextState) {
+                // nextState: 存储要修改的对象
+                // this.state: 存储的还是修改前的状态【此时状态还没有改变】
+                console.log('shouldComponentUpdate 更新', this.state, nextState);
+
+                // 此周期函数需要返回true/false
+                //  返回true：允许更新，会继续执行下一个操作
+                //  返回false：不允许更新，接下来啥都不处理
+                return false
+            }
+        2. 触发 componetWillUpdate 周期函数：更新之前
+            + 此周期函数也是不安全的
+            + 在这个阶段，状态/属性还没有被修改
+        3. 修改状态值/属性值【让this.state.xxx改为最新的值】
+        4. 触发 render 周期函数：组件更新
+            + 按照最新的状态/属性，把返回的JSX编译为virtualDOM
+            + 和上一次渲染出来的virtualDOM进行对比【DOM-diff】
+            + 把差异的部分进行渲染【渲染为真实DOM】
+        5. 触发 componentDidUpdate 周期函数：组件更新完毕
+        + 特殊说明： 如果我们是基于 this.forceUpdate() 强制更新视图，会跳过 shouldComponentUpdate 周期函数的校验，直接从componentWillUpdate开始进行更新【视图一定更新】
+ 
+    - 组件更新的逻辑【第二种：父组件更新，触发的子组件更新】
+        1. 触发 componentWillReceiveProps 周期函数：接收最新属性之前
+            + 周期函数是不安全的
+            UNSAFE_componentWillReceiveProps(nextProps) {
+                // this.props:存储之前的属性
+                // nextProps:传递进来的最新属性
+                console.log('componentWillReceiveProps 父组件更新', this.props, nextProps);
+            }
+        2. 触发 shouldComponentUpdate 周期函数
+        ...
+
+    - 组件卸载
+        1. 触发 componentWillUnmount 周期函数：组件销毁之前
+        2. 销毁
+
+    - 深度优先原则：父组件在操作中，遇到子组件，一定是子组件处理完，父组件才能继续处理
+        + 父组件第一次渲染：
+            父componentWillMount -- 父render -- [子componentWillMount -- 子render -- 子componentDidiMount] -- 父componentDidMount
+        + 父组件更新：
+            父shouldComponetUpdate -- 父componentWillUpdate -- 父render -- [子componentWillReceiveProps - 子shouldComponentUpdate -- 子componentWillUpdate -- 子render -- 子componentDidiUpdate] -- 父componentDidiUpdate
+        + 父组件销毁：
+            父componentWillUnmount -- 处理中[子componentWillUnmount -- 子销毁] -- 父销毁
+
+
+
