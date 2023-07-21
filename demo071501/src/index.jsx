@@ -106,21 +106,22 @@ class DataRender extends React.Component {
         },
         {x, y} = this.state
 
-        console.log(React.createElement(
-            "React.Fragment",
-            null,
-            React.createElement(
-                "h2",
-                { className: "title", style: styObj }, 
-                "\u5B66\u4E60React"
-            ),
-            React.createElement(
-                "div",
-                { className: "box" },
-                React.createElement("span", null, x), 
-                React.createElement("span", null, y)
-            )
-        ));
+        // console.log(React.createElement(
+        //     "React.Fragment",
+        //     null,
+        //     React.createElement(
+        //         "h2",
+        //         { className: "title", style: styObj }, 
+        //         "\u5B66\u4E60React"
+        //     ),
+        //     React.createElement(
+        //         "div",
+        //         { className: "box" },
+        //         React.createElement("span", null, x), 
+        //         React.createElement("span", null, y)
+        //     )
+        // ));
+
         // console.log(createElement(
         //     "React.Fragment",
         //     null,
@@ -188,15 +189,15 @@ root.render(
 // )
 // render(jsxObj, document.getElementById('root'))
 
-console.log(React.createElement(DemoFunction, {
-    title: "\u51FD\u6570\u7EC4\u4EF6",
-    className: "box",
-    data: [100, 200]
-}));
+// console.log(React.createElement(DemoFunction, {
+//     title: "\u51FD\u6570\u7EC4\u4EF6",
+//     className: "box",
+//     data: [100, 200]
+// }));
 
 fetch('/jian/subscriptions/recommended_collections')
 .then(response => response.json())
-.then(value => console.log(value))
+// .then(value => console.log(value))
 
 
 let obj = {
@@ -207,5 +208,11 @@ Object.freeze(obj)
 // obj.x = 100
 // obj.z = 200
 // delete obj.y
-console.log(Object.isFrozen(obj), obj);
+// console.log(Object.isFrozen(obj), obj);
 
+console.log(React.cloneElement({
+    type: Vote,
+    props: {
+        title: '标题'
+    }
+}));

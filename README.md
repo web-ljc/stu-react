@@ -298,3 +298,62 @@
         + 被冻结的对象，即使不可扩展，也是密封的
 
 2. 类组件的底层渲染机制
+    - render函数在渲染的时候，如果type是：
+        + 字符串：创建一个标签
+        + 普通函数：把函数执行，并把props传递给函数
+        + 构造函数：把构造函数基于new 去执行【创建类的一个实例】，也会把解析出来的props传递过去
+            + 每调用一次类组件都会创建一个类实例
+            + 把在类组件中编写的render函数执行，把返回的JSX【virtualDOM】当作视图进行渲染
+
+            ```js
+                new Vote({
+                    title: '投票'
+                })
+            ```
+    - 类组件是-动态组件
+        + 创建一个构造函数（类）
+          + 求必须继承React.Component/PureComponent这个类
+          + 习惯使用ES6中的class创建类
+          + 必须给当前类设置一个render方法【放在原型上】，在render方法中，返回需要渲染的视图
+
+    - 从调用类组件 new Vote() 开始，类组件内部发生的事情：
+        1. 初始化属性
+            + 先校验规则，校验完毕后，再处理属性的其它操作
+                方案一
+                constructor(props) {
+                    super(props) // 把传递进来的属性挂载到this实例上
+                }
+                方案二：即便我们不在constructor中处理，在constructor处理完毕后，React内部也会把传递的props挂载到实例上，
+                    所以在其它的函数中，只要保证this是实例，就可以基于this.props获取传递的属性
+                + 同样this.props获取的属性对象也是被冻结的 Object.isFrozen(this.props)
+            + 规则校验
+                static defaultProps={}
+                static propType={}
+
+        2. 初始化状态
+            + 状态：后期修改状态，可以触发视图的更新
+                需要手动初始化，如果我们没有做相关处理，则会默认往实例上挂载一个state，初始值为null  this.state=null
+                state = {
+                    ...
+                }
+            + 修改状态，控制视图更新
+                this.state.xx = xxx，这种操作仅仅是修改了状态值，但是无法让视图更新
+                想让视图更新，需要基于React.Component.prototype提供的方法操作：
+                1. this.setState(partialState) 即可以修改状态，也可以视图更新
+                    partialState: 部分状态
+                    this.setState({xxx: xxx})
+                2. this.forceUpdate() 强制更新
+        
+        3. 触发 componentWillMount 周期函数（钩子函数）：组件第一次渲染之前
+            钩子函数：在程序运行到某个阶段，可以基于提供一个处理函数，让开发者在这一阶段做一些自定义的事情
+            + 此周期函数是不安全的，【虽然可以用，未来可能被移除，所以不建议使用】
+                + 控制会抛出黄色警告[为了不抛警告，可以暂时使用UNSAFE_componentWillMount]
+            + 如果开启了React.StrictMode[React的严格模式]，则我们使用UNSAFE_componentWillMount，这样的周期函数，控制台会直接抛出红色警告错误
+                + React.StrictMode / "use strict"
+                + "use strict":JS的严格模式
+                + React.StrictMode:React的严格模式，会检查React中一些不规范的语法、或者是不建议使用的API
+        
+        4. 触发 render 周期函数：渲染
+
+        5. 触发 componentDidMount 周期函数：第一次渲染完毕
+            + 已经把virtualDOM变为真实DOM【可以获取真实DOM】
