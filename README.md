@@ -420,3 +420,43 @@
         1. 先比较对象成员的数量，如果数量不一致，那么2个对象肯定不一致
         2. 对象引用，对比的是对象的堆地址，如果地址不同，内容相同也是不一样的
 
+受控组件：基于修改数据/状态，让视图更新，达到需要的效果
+非受控组件：基于ref获取DOM元素，操作DOM元素，来实现需求的效果
+
+4. 基于ref获取DOM元素的语法
+    1. 给需要获取的元素设置 ref='xxx'，后期基于this.refs.xxx获取相应的DOM元素【不推荐使用,在严格模式React.strictMode下会报错】
+        设置：<h2 className="title" ref="titleBox">温馨提示</h2>
+        获取：this.refs.titleBox
+        
+    2. 把ref属性设置为一个函数
+        设置：<h2 className="title" ref={x => this.xxx = x}>温馨提示</h2>
+            + x是函数的形参：存储的就是当前DOM元素
+            + 把获取的DOM元素x，直接挂在到实例的属性上
+        获取：this.xxx
+    
+    3. 基于React.createRef()方法创建一个ref对象 -- 
+        this.xxx = React.createRef() // => {current:null}
+        设置：<h2 className="title" ref = {ref对象}>温馨提示</h2>
+        获取：this.xxx.current
+    
+    4. 原理：在render渲染的时候，会获取vituralDOM的ref属性
+        + 如果属性值是一个字符串，会给this.refs增加这样一个成员，成员值就是当前的DOM元素
+        + 如果属性值是一个函数，会执行函数，把当前DO元素传递给这个函数【x - DOM元素】，而在函数执行的内部，一般会把DOM元素直接挂在实例的某个属性上
+        + 如果属性值是一个ref对象，则会把DOM元素赋值给对象的current属性上
+
+    5. 目的
+        + 给元素标签设置ref， 目的：获取对应的DOM元素
+        + 给类组件设置ref，目的：获取当前调用组件创建的实例，【后续可以根据实例获取子组件中的相关信息】
+        + 给函数组件设置ref，直接报错Function components cannot be given refs. Attempts to access this ref will fail. Did you mean to use React.forwardRef()?
+            + 但是我们可以配合 React.forwardRef 实现ref转发
+            + 目的：获取函数子组件内部的某个元素
+            ```js
+                const Child3 = React.forwardRef(function Child3 (props, ref) {
+                    // console.log(ref); // ref是调用Child3时，设置的ref属性值【函数】
+                    // x => this.child3 = x
+                    return <div>
+                        子组件2
+                        <button ref={ref}>按钮</button>
+                    </div>
+                })
+            ```
