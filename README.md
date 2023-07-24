@@ -411,5 +411,12 @@
         + 父组件销毁：
             父componentWillUnmount -- 处理中[子componentWillUnmount -- 子销毁] -- 父销毁
 
+3. PureComponent 和 Component的区别：
+    PureComponent会给类组件默认加一个shouldComponentUpdate周期函数
+    + 在此周期函数中，它对新老的属性/状态，会做一个浅比较
+    + 如果浅比较，发现属性和状态并没有改变，则返回false，不继续更新组件
 
+    + 浅比较：只比较对象的第一级，对于深层次内容，不会再进行比较
+        1. 先比较对象成员的数量，如果数量不一致，那么2个对象肯定不一致
+        2. 对象引用，对比的是对象的堆地址，如果地址不同，内容相同也是不一样的
 
