@@ -460,3 +460,43 @@
                     </div>
                 })
             ```
+
+5. setState
+    - this.setState([partialState], [callback])
+        - [partialState]：支持部分状态更改
+            this.setState({
+                x: 100 // 不论总共有多少状态，我们只修改了x，其余的状态不动
+            })
+        - [callback]：在状态更改/视图更新完毕后触发执行[只要执行了setState，callback一定会执行]
+            + 发生在componentDidUpdate周期函数之后【componentDidUpdate会在任何状态更改以后触发执行；而回调函数方式，可以在指定状态更新后处理一些事情】
+            + 特殊：即便我们基于 shouldComponetUpdate 阻止了状态/视图的更新，componentDidUpdate 函数周期肯定不执行，但设置的callback回调函数依然会被执行
+        类似于Vue框架中的$nextTick
+        - [fn]：函数
+            this.setState(prevState => {
+                // prevState:存储之前的状态值
+                // return对象：就是我们想要修改的新状态值【支持修改部分状态】
+                return {
+                    x:xxx
+                }
+            })
+            
+    
+    - 在React18中，setState都是“异步操作”【不论是在哪执行，例如：合成时间、周期函数、定时器】
+        + React18中有一套更新队列的机制
+        + 基于异步操作，实现状态的批处理
+        + 目的：实现状态的批处理【统一处理】
+            + 减少视图的更新次数，降低渲染消耗的性能
+            + 让更新的逻辑和流程更加清晰&稳健
+        + 原理：利用了更新队列【updater】机制来处理的
+            + 在当前相同的时间段内【浏览器此时可以处理的事情中】，遇到setState会立即放入到更新队列中
+            + 此时状态/视图还未更新
+            + 当所有的代码操作结束，会“刷新队列”【通知更新队列中的任务执行】：把所有放入的setState合并在一起执行，只触发一次视图更新
+    - 在React18 和 React16中，关于setState是同步还是异步，是有一些区别的
+        + React18中：不论在什么地方执行setState，他都是异步的【都是基于updater更新队列机制，实现的批处理】
+        + React16中：如果在合成事件【jsx元素中基于onCxx绑定的事件】、周期函数中、setState的操作是异步的。如果setState出现在其它的异步操作中【例如：定时器、手动获取DOM元素做的事件绑定等】，他将变为同步的操作【立即更新状态和让视图渲染】
+
+    - flushSync:可以刷新“updater更新队列”,也就是让修改状态的任务立即批处理一次
+        + import {flushSync} from "react-dom";
+
+
+

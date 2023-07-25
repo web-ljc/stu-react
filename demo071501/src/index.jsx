@@ -8,6 +8,7 @@ import Vote from '@/views/Vote';
 import Demo2 from '@/views/Demo2';
 import Demo3 from '@/views/Demo3';
 import Demo4 from '@/views/Demo4';
+import Demo5 from '@/views/Demo5';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -175,6 +176,7 @@ root.render(
         <Demo2 />
         <Demo3 />
         <Demo4 />
+        <Demo5 />
     </>
 );
 
