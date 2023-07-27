@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件委托</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+        .center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #root {
+            width: 300px;
+            height: 300px;
+            background-color: lightblue;
+        }
+        #outer {
+            width: 200px;
+            height: 200px;
+            background-color: lightgreen;
+        }
+        #inner {
+            width: 100px;
+            height: 100px;
+            background-color: lightcoral;
+        }
+    </style>
+</head>
+<body>
+    <div id="root" class="center">
+        <div id="outer" class="center">
+            <div id="inner" class="center"></div>
+        </div>
+    </div>
+
+    <script>
+        // window - document - html - body - root - outer - inner
+        const html = document.documentElement,
+            body = document.body,
+            root = document.querySelector('#root'),
+            outer = document.querySelector('#outer'),
+            inner = document.querySelector('#inner')
+
+        // root.addEventListener('click', function() {
+        //     console.log('root 冒泡');
+        // })
+
+        // outer.addEventListener('click', function(ev) {
+        //     // ev.stopPropagation()
+        //     console.log('outer 捕获');
+        // }, true)
+
+        // outer.addEventListener('click', function() {
+        //     console.log('outer 冒泡');
+        // })
+
+        // inner.addEventListener('click', function() {
+        //     console.log('inner 捕获');
+        // }, true)
+
+        // inner.addEventListener('click', function(ev) {
+        //     ev.stopPropagation() // 阻止传播
+        //     // ev.stopImmediatePropagation() // 阻止事件传播，只不过它可以把当前元素绑定的其它方法，如果还未执行，也不会再执行了
+        //     console.log('inner 冒泡1');
+        // })
+        // inner.addEventListener('click', function(ev) {
+        //     console.log('inner 冒泡2');
+        // })
+
+        /*
+            
+            事件具备传播机制，例如：当我们触发inner的点击行为的时候
+            1. 从最外层向最里层逐一查找【捕获阶段：分析出路径】
+                window -> document -> html -> body -> root -> outer -> inner
+            2. 把事件源（点击的这个元素）的点击行为触发【目标阶段】
+                inner
+            3. 按照捕获阶段分析出来的路径，从里到外，把每一个元素的点击行为也触发【冒泡阶段】
+                window <- document <- html <- body <- root <- outer <- inner
+            
+            事件和事件绑定：
+                事件是浏览器赋予元素的默认行为
+                事件绑定是给这个行为绑定一个方法
+            即便我们没有给body的点击绑定方法，当我们点击body的时候，其点击行为也会被触发，只不过啥事都不做
+
+            - ev.stopPropagation: 阻止事件传播【捕获、冒泡】
+            - ev.stopImmediatePropagtion: 阻止事件传播，可以阻止当前元素绑定的其它方法【同级】，如果未执行，也不会再执行
+        */
+        
+    </script>
+    <script>
+        /*
+            事件委托：利用事件的传播机制，实现的一套事件绑定处理方案
+                例如：一个容器中，有很多元素都要在点击的时候做一些事情
+                    传统方案：首先获取需要操作的元素，然后逐一做事件绑定
+                    事件委托：给需要给容器做一个事件绑定【点击内部的任何元素，根据事件的冒泡传播机制，都会让容器的点击事件也触发；我们在这里，根据事件源，做不同的事情就可以了】
+                优势：
+                    + 提高JS代码运行的性能，并且把处理的逻辑集中在一起
+                    + 给动态绑定元素做事件绑定
+                    + 某些需求必须基于事件委托处理，例如：除了点击xxx外，点击其余任何东西都yyy
+                限制：
+                    + 当前操作的事件必须支持冒泡传播机制才可以
+                        例如：mouseenter/mouseleave等事件是没有冒泡传播机制
+                    + 如果单独做的事件绑定中，做了事件传播机制的阻止，那么事件委托中的操作也不会生效
+        */
+
+        body.addEventListener('click', function(ev) {
+            // ev.targe: 事件源【点击谁谁就是事件源】
+            // console.log(ev);
+            const target = ev.target,
+                id = target.id
+            if (id === 'root') {
+                console.log('root');
+                return
+            }
+            if (id === 'outer') {
+                console.log('outer');
+                return
+            }
+            if (id === 'inner') {
+                console.log('inner');
+                return
+            }
+            // 如果以上都不是，不处理
+            return
+        })
+
+        // const body = document.body,
+        //     root = document.querySelector('#root'),
+        //     outer = document.querySelector('#outer'),
+        //     inner = document.querySelector('#inner')
+
+        // root.addEventListener('click', function() {
+        //     console.log('root 冒泡');
+        // })
+        // outer.addEventListener('click', function() {
+        //     console.log('outer 冒泡');
+        // })
+        // inner.addEventListener('click', function() {
+        //     console.log('inner 冒泡');
+        // })
+    </script>
+</body>
+</html>
