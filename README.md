@@ -666,5 +666,48 @@
         - 惰性处理：我们需要把基于属性传递进来的x/y，经过其他处理的结果作为初始值
             + 需要对初始值的操作，进行惰性处理，只有第一次渲染组件处理这些逻辑，以后组件更新，这样的逻辑就不再运行
     
+    2. useEffect：在函数组件中，使用生命周期函数
+        + useEffect(callback)
+            + 第一次渲染完毕后，执行callback，等价于componentDidMount
+            + 在组件每一次更新完毕后，执行callback，等价于componentDidUpdated  
+
+        + useEffect(callback, [])
+            + 只有第一次渲染完毕后，才会执行callback，等价于componentDidMount
+            + 每一次视图更新完毕后，callback不执行
+
+        + useEffect(callback, [依赖的状态（多个状态）])
+            + 只有第一次渲染完毕后，才会执行callback，等价于componentDidMount
+            + 当依赖的状态值（或者多个状态中的一个）发生改变，执行callback
+            + 当依赖的状态值没有改变，在组件更新的时候，callback不执行
+
+        + useEffect 返回小函数
+            ```js
+                useEffect(() => {
+                    return () => {
+                        // 返回的小函数，会在组件释放的时候执行
+                        // 如果组件更新，会把上一次返回的小函数执行【可以理解为上一簇渲染的组件释放了】
+                    }
+                })
+            ```
+
+    3. useLayoutEffect 和 useEffect 细节
+        - useEffect 必须在函数的最外层上下文中调用，不能把其嵌入到条件判断、循环等操作语句中、
+        - useEffect 如果设置了返回值，则返回值必须是一个函数【等表组件销毁时触发】，callback经过async的修饰，返回的是一个promise实例，不符合要求
+        
+        - useLayoutEffect 会阻止浏览器渲染真实DOM，优先执行Effect链表中的callback
+        - useEffect 不会阻塞浏览器渲染真实DOM，在渲染真实DOM的同时，去执行Effect链表中的callback
+            - useLayoutEffect设置的callback要优先于useEffect去执行
+            - 在两者设置的callback中，依然可以获取DOM元素【原因：真实DOM已经创建了，区别只是浏览器是否渲染】
+            - 如果在callback函数中又修改了状态值【视图又要更新】
+                + useEffect：浏览器肯定是把第一次的真实已绘制了，再去渲染第二次真实DOM
+                + useLayoutEffect: 浏览器是把两次真实DOM的渲染，合并一起渲染的
+
+        - 视图更新的步骤：
+            1. 第一步：基于babel-preset-react-app把JSX编译为createElement格式
+            2. 第二步：把createElement执行，创建出virtualDOM
+            3. 第三步：基于root.render 方法把virtualDOM变为真实DOM对象【DOM-DIFF】
+                - useLayoutEffect阻塞第四步操作，先去执行Effect链表中的方法【同步操作】
+                - useEffect第四部操作和Effect链表中的方法执行，是同时进行的【异步操作】
+            4. 第四步：浏览器渲染和绘制真实DOM对象
 
 
