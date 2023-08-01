@@ -756,3 +756,21 @@
                 2. 在子组件内部也要做一个处理，验证父组件传递的属性是否发生改变，
                     - 类组件：可以继承 PureComponent 即可【shouldComponentUpdate中对于新老属性做了浅比较】，如果没有变化，则让子组件不能更新。
                     - 函数组件：基于React.memo函数，对新老传递的属性做比较，如果不一致，才会执行函数。
+
+    7. 自定义hook，提取公共逻辑
+        - 作用：提取封装一些公共的处理逻辑
+        - 使用：创建一个函数，名字useXXXX, 后期可以在组件中调用这个方法
+            ```js
+                const usePartialState = (initialValue) => {
+                    const [state, setState] = useState(initialValue)
+                    // setState不支持部分状态更改
+                    // setPartial支持部分状态更改
+                    const setPartial = (partialState) => {
+                        setState({
+                            ...state,
+                            ...partialState
+                        })
+                    }
+                    return [state, setPartial]
+                }
+            ```

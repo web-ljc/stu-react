@@ -16,7 +16,7 @@ import React, { useState, useMemo } from "react";
         - useMemo具备“计算缓存”效果，在依赖的状态值没有发生改变，callback没有触发执行的时候，xxx获取的是上一次计算出来的结果。和Vue的计算属性非常相似
 */
 
-const Vote = (props) => {
+const Demo = (props) => {
     const [supNum, setSupNum] = useState(10),
         [oppNum, setOppNum] = useState(10),
         [x, setX] = useState(0)
@@ -64,4 +64,4 @@ Vote.defaultProps = {
     title: 'test title'
 }
 
-export default Vote
+export default Demo

@@ -4,7 +4,7 @@ import React, { useState, useMemo, useCallback } from "react";
     
 */
 let prev;
-const Vote = (props) => {
+const Demo = (props) => {
     const [num, setNum] = useState(10)
 
     // 函数第一次创建0x001，第二次更新：0x1001
@@ -65,4 +65,4 @@ const Child2 = React.memo(() => {
     </div>
 })
 
-export default Vote
+export default Demo
