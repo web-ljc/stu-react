@@ -483,8 +483,7 @@
                     x:xxx
                 }
             })
-            
-    
+
     - 在React18中，setState都是“异步操作”【不论是在哪执行，例如：合成时间、周期函数、定时器】
         + React18中有一套更新队列的机制
         + 基于异步操作，实现状态的批处理
@@ -607,7 +606,7 @@
             - `useMemo` 构建缓存优化方案
             - `useRef` 使用ref获取DOM
             - `useImperativeHandle` 配合forwardRef一起使用
-            - `useReducer` 与useEffect相同，但会在所有的DOM变更之后同步调用effect
+            - `useLayoutEffect` 与useEffect相同，但会在所有的DOM变更之后同步调用effect
             - ...
         - 自定义Hook
 
@@ -707,7 +706,24 @@
             2. 第二步：把createElement执行，创建出virtualDOM
             3. 第三步：基于root.render 方法把virtualDOM变为真实DOM对象【DOM-DIFF】
                 - useLayoutEffect阻塞第四步操作，先去执行Effect链表中的方法【同步操作】
-                - useEffect第四部操作和Effect链表中的方法执行，是同时进行的【异步操作】
+                - useEffect第四步操作和Effect链表中的方法执行，是同时进行的【异步操作】
             4. 第四步：浏览器渲染和绘制真实DOM对象
+
+    4. useRef
+        - 基于“ref={() => {}}”的方式，可以把创建的DOM元素（或者子组件的实例）赋值给box变量。【不推荐】
+        - 基于 React.createRef 创建ref对象来获取想要的内容
+        - 函数组件中，可以基于 useRef Hook函数，创建一个ref对象
+            - useRef只能在函数组件中使用【所有的ReactHook函数，都只能在函数组件中使用，在类组件中使用会报错】
+            - React.createRef 也是创建ref对象，可以在类组件使用，也可以在函数组件中使用
+            - useRef在每一次组件更新的时候，再次执行useRef方法的时候，不会创建新的REF对象，获取到的还是第一次创建的REF对象
+            - React.createRef在每一次组件更新的时候，都会创建一个全新的Ref对象，浪费性能
+        - 在类组件中，创建REF对象，我们基于React.createRef处理，但是在函数组件中，为了保证性能，应该使用专属useRef处理。
+
+        - 目的
+            + 根据标签获取DOM元素
+            + 基于ref获取子组件的实例，基于实例获取子组件内部的属性、方法等
+            + 基于forwardRef实现ref转发，获取子组件内部某个元素
+            + 结合 useImperativeHandle 获取子组件内部的状态或方法
+
 
 
