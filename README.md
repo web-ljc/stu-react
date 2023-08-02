@@ -749,6 +749,9 @@
             + 或者说，基于useCallback，可以始终获取第一次创建函数的堆内存地址
 
         - 不能乱用，虽然减少了堆内存的开辟，但useCallback本身也有自己的处理逻辑和缓存机制，也消耗时间
+        - useCallback不能乱用
+            - 如果没有设置任何依赖，则函数永远是在第一次组件渲染，产生的闭包中创建的。
+            - 函数中的用到的信息【向上级上下文中找】永远是第一次闭包中的信息
 
         - 场景：父组件嵌套子组件，父组件要把一个内部的函数，基于属性传递给子组件，此时传递的这个方法，基于useCallback处理会更好，这样传递的函数都是第一个地址，优化子组件渲染
             - 当父组件更新时，因为传递给子组件的属性仅仅是一个函数，所以不想让子组件也跟着更新
@@ -774,3 +777,77 @@
                     return [state, setPartial]
                 }
             ```
+
+8. 复合组件通信方案
+    - 单项数据流
+        - 属性传递方向是单向的
+            + 父组件可以基于属性把信息传递给子组件
+            + 子组件无法基于属性给父组件传递信息，但可以把父组件传递的方法执行，从而实现子改父
+        - 关于生命周期的延续
+            + 组件第一次渲染
+                父componentWillMount -- 父render -- 子componentWillMount -- 子render -- 子componentDidMount -- 父componentDidMount
+            + 组件更新
+                父shouldComponentUpdate -- 父componentWillUpdate -- 父render -- 子componentWillReceiveProps -- 子shouldComponentUpdate -- 子componentWillUpdate -- 子render -- 子componentDidUpdate-- 父componentDidUpdate
+
+    - 父子组件通信
+        1. 以父组件为主导，基于“属性”实现通信
+            + 原因：只有父组件可以调用子组件，此时可以基于属性，把数据传递给子组件
+            - 父组件给子组件传递属性：可以基于属性props
+            - 子组件更改父组件数据：可以基于属性props传递方法，子组件执行方法
+            - 父组件传递HTML给子组件：可以基于属性中的children【插槽】
+        
+        2. 父组件基于ref获取子组件的实例【或者子组件基于useImperativeHandle暴露的数据和方法】
+            - 父组件调用子组件：可设置ref获取子组件的实例，状态和方法
+
+    - 祖先组件通信
+        - 对于嵌套结构深的组件，基于属性一层层的向下传递会非常麻烦
+        - 祖先组件需要把数据、方法，放在上下文中。后代组件可以直接去上下文中获取信息
+        - 类组件
+            1. 创建一个上下文对象，来管理上下文中信息
+                ```js
+                    const ThemeContext = React.createContext()
+                ```
+            2. 让祖先组件Vote，具备状态和修改状态的方法，同时还需要把这些信息，存储到上下文中
+                - 基于上下文中，提供的Provider组件，用来：
+                    - 向上下文中存储信息：value属性指定的值就是要存储的信息
+                    - 当祖先组件更新，render重新执行，会把最新的状态值，再次存储到上下文对象中
+                    ```js
+                        <ThemeContext.Provider
+                            value={{
+                                supNum,
+                                oppNum,
+                                handle: this.handle
+                            }}
+                        >
+                            <Parent />
+                        </ThemeContext.Provider>
+                    ```
+            3. 在后代组件中，需要获取上下文中的信息
+                - VoteMain：获取信息绑定即可
+                - VoteFooter：获取信息，把获取的函数（修改组件状态的函数），在点击时执行
+                - 方案一
+                    1. 导入创建的上下文对象
+                    2. 给类组件设置私静态私有属性 contextType=上下文对象
+                        + 在this.context属性上，存储了上下文的所有信息
+                    3. 从this.context中获取需要的信息
+                    ```js
+                        static contextType = ThemeContext
+                        const { supNum, oppNum } = this.context
+                    ```
+                - 方案二
+                    1. 利用提供的Consumer组件
+                    ```js
+                        <ThemeContext.Consumer>
+                            {context => {
+                                return <Child />
+                            }}
+                        </ThemeContext.Consumer>
+                    ```
+        - 函数组件
+            1. 同类组件
+            2. 同类组件
+            3. 方案二同类组件
+                - 函数组件：useContext
+                ```js
+                    const {supNum, oppNum} = useContext(ThemeContext)
+                ```
