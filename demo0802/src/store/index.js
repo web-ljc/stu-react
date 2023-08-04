@@ -1,4 +1,4 @@
-import {createStore} from 'redux'
+import {createStore} from '../myredux'
 
 // 4.reducer修改STORE容器中的公共状态
 let initial = {
