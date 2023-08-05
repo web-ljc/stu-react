@@ -903,3 +903,27 @@
         2. 在入口基于上下文对象，把store放入到上下文中，需要用到store组件，从上下文中获取
         3. 组件中基于store，完成公共状态的获取、和任务的派发
             + 使用到公共状态的组件，必须向store的事件池中加入让组件更新的办法：只有这样才可以确保，公共状态改变，可以让组件更新，获取最新的状态进行绑定
+
+    - reducer的拆分和合并
+        1. 按照模块把reducer进行单独管理，每个模块都有自己的reducer，最后把所有reducer进行合并，赋值给store
+            ```js
+                import {combineReducers} from 'redux'
+                const reducer = combineReducers({
+                    vote: voteReducer,
+                    personal: personalReducer
+                })
+            ```
+            + reducer:最后合并的总的reducer
+            + 此时容器中的公共状态，会按照设置的成员名字，分模块进行管理
+            ```js
+                state = {
+                    vote: {
+                        supNum: 10,
+                        oppNum: 0
+                    }
+                    personal: {}
+                }
+            ```
+            + 基于 store.getState() 获取状态。 store.getState().vote.supNum
+            + 派发的操作不需要改动，每一次派发后，都会去所有reducer进行逐一匹配【用派发的行为标识，和每个模块reducer中判断的行为标识进行比较】和谁匹配成功，就执行谁的逻辑，只要匹配成功都会执行
+            + 事件池中的方法都会全部执行
