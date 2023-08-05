@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import ThemeContext from "../ThemeContext";
 import { useEffect } from "react";
+import action from '../store/actions'
 
 /*
 */
@@ -53,10 +54,10 @@ class VoteFooter extends React.Component {
         return (
             <div className="footer">
                 {/* 5. 派发任务 */}
-                <button onClick={store2.dispatch.bind(null, {type: 'VOTE_SUP'})}>
+                <button onClick={store2.dispatch.bind(null, action.vote.support())}>
                     agree
                 </button>
-                <button onClick={store2.dispatch.bind(null, {type: 'VOTE_OPP'})}>
+                <button onClick={store2.dispatch.bind(null, action.vote.oppose())}>
                     reject
                 </button>
             </div>

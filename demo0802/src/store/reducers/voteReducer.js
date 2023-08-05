@@ -1,4 +1,6 @@
 // voteReducer
+import * as TYPES from '../action-type'
+
 const initial = {
     supNum: 10,
     oppNum: 5,
@@ -9,11 +11,11 @@ export default (state = initial, action) => {
     state = {...state}
 
     switch (action.type) {
-        case 'VOTE_SUP':
+        case TYPES.VOTE_SUP:
             state.supNum++
             console.log(11111133333);
             break
-        case 'VOTE_OPP':
+        case TYPES.VOTE_OPP:
             state.oppNum++
             break
         default:
