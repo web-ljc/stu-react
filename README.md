@@ -856,8 +856,6 @@
     - 可以在代理组件中，经过业务逻辑的处理，获取一些信息，最后基于属性等方案，传递给我们最终要渲染的组件
 
 
-
-
 ##### 5455
 1. Redux基础操作和思想
     - 公共状态管理方案
@@ -949,3 +947,41 @@
             + 每一次dispatch派发，都是把这个reducer执行
             + state：redux容器中的公共状态
             + action：派发时候传递进来的行为对象
+
+2. React-Redux基础操作和思想
+    - react-redux基础运用
+        + 主要是在组件应用的时候，更方便一些
+        + 内部自己创建了上下文对象，并且可以把store放在上下文中，在组件中使用时，无需自己获取上下文的store
+        
+        1. 引入Provider
+            ```js
+                // 引入Provider
+                import {Provider} from 'react-redux'
+                // 设置全局环境
+                <Provider store={store}>
+                    <Vote />
+                </Provider>
+            ```
+        2. 在组件使用中，无需基于上下文对象获取store。也无需基于getState获取公共状态，也无需手动把让组件更新的方法，放在事件池中
+            ```js
+                /*
+                connect(mapStateToProps, mapDispatchToProps)(我们要渲染的组件)
+                1. mapStateToProps：可以获取到redux的公共状态，把需要的信息作为属性，传递组件即可
+                    connect(state => {
+                        // 存储redux容器中，所有模块的公共状态信息
+                        // 返回对象中的信息，就是要作为属性，传递给组件的信息
+                        return {
+                            supNum: state.vote.supNum
+                        }
+                    })(Vote)
+                */
+                // 引入connect
+                import {connect} from "react-redux"
+                // 通过props使用
+                const {supNum, oppNum} = props
+                // 包裹组件,通过props传递入参
+                connect(state => state.vote)(Vote)
+            ```
+
+
+
