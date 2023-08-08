@@ -940,6 +940,7 @@
         + voteAction包含好多方法，每一个方法执行，都返回要派发的行为对象
         + 目前来看，此工程化步骤，不仅没好处，而且更麻烦了
         + 此操作的意义：创建actionCreator，接下来处理react-redux的时候，非常有用
+        + 在不使用任何中间件的情况下，actionCreator对象中，是不支持异步操作的。我们要保证方法执行立马返回标准的action对象
 
     - combineReducers源码
         + 传入包含多个reducer键值对的对象
@@ -989,7 +990,28 @@
                 // 通过props使用
                 const {supNum, oppNum} = props
                 // 包裹组件,通过props传递入参
-                connect(state => state.vote)(Vote)
+                connect(
+                    state => state.vote,
+                    dispatch => {
+                        return {
+                            support() {
+                                // dispatch({type: TYPES.VOTE_SUP})
+                                dispatch(action.vote.support())
+                            }
+                        },
+                    }
+                )(Vote)
+                /*
+                    也可以直接传入actionCreators，会通过bindActionCreators方法进行编译，返回处理好的对象
+                    console.log(bindActionCreators(action.vote, dispatch))
+                    1.获取action.vote遍历所有属性到新对象中
+                    2.给新对象属性添加方法: () => dispatch(action.vote.support())
+                    3.返回新对象
+                 */
+                connect(
+                    state => state.vote,
+                    action.vote
+                )(Vote2)
             ```
     - 源码
         - 创建React.createContext上下文
@@ -999,5 +1021,56 @@
             - 并获取state
             - 设置subscribe更新事件
             - 设置mapStateToProps/mapDispatchToProps
+
+    - redux中间件及处理机制
+        - store.dispatch 与 reducer中间的处理的插件
+        + redux-logger每一次派发，在控制台输出派发的日志，方便对redux的操作进行调试，
+            - 【输出的内容：派发之前的状态、派发的行为、派发后的状态】
+        + redux-thunk/redux-promise 实现异步派发
+            + 【每一次派发的时候，需要传递给reducer的action对象中的内容，是需要异步获取的】
+            + 都是2次派发，第一次派发用的是，重写后的dispatch；
+                - 这个方法不会去校验对象是否有type属性，也不在乎传递的对象是否为标准普通对象
+                - 此次派发，仅仅是为了第二次派发做准备
+                    - redux-thunk: 把返回的函数执行，把真正的dispath传递给函数
+                    - redux-promise：监听返回的promise实例，在实例为成功后，需要基于真正的dispatch，把成功结果进行派发
+                    - 区别：redux-thunk的第二次派发需要手动处理，redux-promise是自动处理了
+                
+            + redux-thunk
+                - 点击按钮，执行support方法，把voteAction.support()执行，执行的返回值进行派发
+                    1. 首先方法执行返回一个函数，内部给函数设置一个type属性，属性值不会和reducer中的逻辑匹配
+                    2. 把返回的函数执行，把派发的方法dispatch传递给函数【在函数中，自己搞异步操作，异步操作成功后，在手动基于dispatch进行派发】
+                ```js
+                    // react-redux中connect处理的dispatch
+                    // support() {
+                    //    dispatch(action.vote.support()) // 重写了dispatch
+                    // }
+
+                    {
+                        // redux-thunk
+                        support() {
+                            return async (dispatch) => {
+                                await delay()
+                                return dispatch({
+                                    type: TYPES.VOTE_SUP
+                                })
+                            }
+                        }
+                        // redux-promise
+                        async oppose() {
+                            await delay(2000)
+                            return {
+                                type: TYPES.VOTE_OPP
+                            }
+                        }
+                    }
+                ```
+            + redux-promise
+                1. 此dispatch也是被重写的，传递进来的promsie实例
+                    - 没有type属性，但是不报错
+                    - 也不会通知reducer执行
+                2. 会监听voteAction.oppose执行的返回值【promise实例】等待实例为成功的时候，它内部会自动再派发一次任务
+                    - 用到的是store.dispatch派发，会通知reducer执行
+                    - 把实例为成功的结果传【标准的action对象】递给reducer，实现状态更改
+
 
 

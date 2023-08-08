@@ -13,7 +13,6 @@ export default (state = initial, action) => {
     switch (action.type) {
         case TYPES.VOTE_SUP:
             state.supNum++
-            console.log(11111133333);
             break
         case TYPES.VOTE_OPP:
             state.oppNum++

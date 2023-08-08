@@ -39,7 +39,7 @@ export function connect(mapStateToProps, mapDispatchToProps) {
             // 获取上下文store
             const {store} = useContext(ThemeContext),
                 {getState, dispatch, subscribe} = store
-            
+
             // 向事件池中加入组件更新的方法
             let [, fourceUpdate] = useState(0)
             useEffect(() => {
@@ -64,7 +64,6 @@ export function connect(mapStateToProps, mapDispatchToProps) {
                 // 是actionCreator对象，需要经过bindActionCreators处理
                 dispatchProps = bindActionCreators(mapDispatchToProps, dispatch)
             }
-
 
             return <Component
                 {...porps}

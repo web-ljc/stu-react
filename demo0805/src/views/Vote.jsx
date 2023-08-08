@@ -1,5 +1,5 @@
 import React from "react";
-import { connect } from "../myReactRedux";
+import { connect } from "react-redux";
 import action from '../store/actions'
 import { bindActionCreators } from "redux"
 
