@@ -1072,5 +1072,54 @@
                     - 用到的是store.dispatch派发，会通知reducer执行
                     - 把实例为成功的结果传【标准的action对象】递给reducer，实现状态更改
 
+3. redux-toolkit
+    - 基于切片机制，把reducer和actionCreator混合在一起了
+    - 使用
+        1. 创建store引用toolkit
+        ```js
+            import {configureStore} from '@reduxjs/toolkit'
 
+            const store = configureStore({
+                // 指定reducer，【类似于reducer的合并，最后会按照指定的模块，去管理各板块下的状态】
+                reducer: {
+                    // 按模块管理各个切片
+                    task: taskSliceReducer
+                },
+                // 使用中间价，如果我们不指定任何中间件，则默认集成了reduxThunk，但是一但设置，会整体替换默认值，需要手动指定thunk中间件
+                middleware: [reduxLogger, reduxThunk]
+            })
+        ```
+        2. 创建各模块切片
+        ```js
+            /* TASK板块的切片: 包含reducer & action-creator */
+            import { createSlice } from "@reduxjs/toolkit";
+
+            const taskSlice = createSlice({
+                name: 'task', // 切片名字
+                initialState: { // 切片对应reducer中的初始状态
+                    taskList: null
+                },
+                // 编写不同业务逻辑，对公共状态的更改
+                reducers: {
+                    getAllTaskList(state, action) {
+                        // state:redux中的公共状态信息【基于immer库管理，无需自己再克隆了】
+                        // action:派发的行为对象，无需考虑行为标识问题，传递的其他信息，都是以action.payload传递
+                        state.taskList = action.payload
+                    },
+                }
+            })
+            export const {getAllTaskList} = taskSlice.actions
+            export default taskSlice.reducer
+        ```
+        3. 使用
+        ```js
+            import { useSelector, useDispatch } from "react-redux";
+            import {getAllTaskList, removeTask} from '../store2/features/taskSlice'
+            // 获取公共状态和派发的方法
+            let {taskList} =  useSelector(state => state.task),
+                dispatch = useDispatch()
+            const handler = () => {
+                dispatch(removeTask('111'))
+            }
+        ```
 

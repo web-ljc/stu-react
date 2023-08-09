@@ -1,7 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
 import action from '../store/actions'
-import { bindActionCreators } from "redux"
 
 const Vote = (props) => {
     console.log(props, 22);
