@@ -1123,3 +1123,53 @@
             }
         ```
 
+##### 7172
+1. js装饰器
+    - 对类、类属性、类方法之类的一种装饰，可以理解为在原有的代码外层又包装了一层处理逻辑。这样可以做到不修改代码，就实现某些功能
+    - 目前还没正式发版，webpack中的babel支持装饰器：@babel/plugin-proposal-class-properties  @babel/plugin-proposal-decorators  roadhog@2.5.0-beta.1
+
+    - 类的装饰器
+        - 类装饰器在类声明之前被声明，可以用来监视、修改或替换类的定义
+        @fn
+        class Xxxx {}
+        - 创建类的时候，会把装饰器函数执行
+            + target：当前装饰的类
+            + 可以在装饰器函数中，给类设置一些静态私有的属性方法、或者原型上的属性方法等
+            + 装饰器函数执行的返回结果，会替换原有的类
+        - 同一个装饰器可以作用在多个类上，【基于class创建】
+        - 同一个类也可以使用多个装饰器，从下向上执行
+    - 类中属性/方法的装饰器
+        - 给实例设置私有属性的时候，触发装饰器函数执行，以此来给属性进行装饰
+            ```js
+                const test = (target, name, descriptor) => {
+                    // target：Demo.prototype
+                    // name: 'x'
+                    // descriptor：{configurable: true, enumerable: true, writable: true, initializer: f} 
+                    // 修饰的属性值，则初始值是基于initializer函数设置的
+                    
+                    // target：Demo.prototype
+                    // name: 'getX'
+                    // descriptor：{configurable: true, enumerable: false, writable: true, value: f} 
+                    // 修饰的函数，则初始值是基于value属性设置的
+                }
+            ```
+        - 装饰器返回值必须是一个规则的描述对象，也就是对name修饰属性/方法的描述规则
+        - 同一个类也可以使用多个装饰器，从下向上执行
+
+
+
+- Object.defineProperty(obj, key, descriptor)
+    1. 设置对象中某个成员规则
+        + 如果成员存在，则修改其规则
+        + 如果成员不存在，则新增成员，并设置规则【默认所有规则为false】
+    2. 数据劫持
+- 对象成员规则限制：
+    + Object.getOwnPropertyDescriptor(对象, 成员) 获取对象中某个成员的规则
+    + Object.getOwnPropertyDescriptors(对象) 获取对象所有成员的规则
+    + 规则：
+        configurable: true  是否可以删除
+        enumerable: true    是否可以枚举 for/in Object/keys列举出来
+        writable: true      是否可以更改
+        value: 100          值
+
+
