@@ -950,7 +950,7 @@
             + action：派发时候传递进来的行为对象
 
     - redux弊端
-        + 基于getState获取的公共状态，是直接喝redux中的公共状态，共用相同的堆地址，这样导致可以直接修改公共状态信息。
+        + 基于getState获取的公共状态，是直接改redux中的公共状态，共用相同的堆地址，这样导致可以直接修改公共状态信息。
             - 应该做深克隆
         + 把组件更新的方法，放在事件池中，当公共状态改变，会通知事件池中的所有方法执行。消耗性能。
             - 应该在向事件池中加入方法的时候，把依赖的信息也设置了。在每一执行reducer修改状态之前，把之前的状态存储一份，修改后的最新状态也获取到。通知事件池中方法执行的时候，拿出来的某个方法是否执行，可以判断依赖的状态是否改变
@@ -1156,8 +1156,6 @@
         - 装饰器返回值必须是一个规则的描述对象，也就是对name修饰属性/方法的描述规则
         - 同一个类也可以使用多个装饰器，从下向上执行
 
-
-
 - Object.defineProperty(obj, key, descriptor)
     1. 设置对象中某个成员规则
         + 如果成员存在，则修改其规则
@@ -1171,5 +1169,38 @@
         enumerable: true    是否可以枚举 for/in Object/keys列举出来
         writable: true      是否可以更改
         value: 100          值
+- Proxy
+    1. 设置代理对象
+        let objProxy = new Proxy(obj, {
+            get(target, key) {},
+            set(target, key, value) {}
+        })
 
 
+2. 基于mobx的公共状态管理方案
+    - @observable
+        - 把状态变为可监测的，只有这样基于autorun/@observer等监测机制才会生效
+        - 基于ES6的Proxy做数据劫持，后期修改状态值，可以在STTER函数中做一些特殊处理，例如把依赖其值的监听器触发执行
+        - 监听原始值需要使用observable.box处理
+
+    - @action 
+        - 给事件绑定监听方法，让函数中的状态更改变为异步批处理
+        - @action.bound：绑定函数执行this指向为store
+
+    - @computed
+        - 创建一个具备计算缓存的计算属性
+
+    - @observe(obj, change => {})
+        - 监听器，对对象进行监听，当对象中某个值发生变化，触发回调函数执行
+
+    - autorun(() => {})
+        - 首先会立即执行一次，自动建立起依赖监测，当依赖的状态值发生改变，callback会重新执行
+
+    - reaction(() => [ 监测属性 ], () => {})
+        - reaction和autorun一样，都是监听器，提供更细粒化的状态监测【默认是不会执行的】
+
+    - runInAction(() => {})
+        - 基于runInAction可以实现和@action一样的效果
+
+    - @observer
+        - 监听组件
