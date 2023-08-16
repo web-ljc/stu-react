@@ -6538,10 +6538,10 @@ mobx-react@^6.2.2:
   dependencies:
     mobx-react-lite "^2.2.0"
 
-mobx@^5.15.4:
-  version "5.15.7"
-  resolved "https://registry.npmmirror.com/mobx/-/mobx-5.15.7.tgz#b9a5f2b6251f5d96980d13c78e9b5d8d4ce22665"
-  integrity sha512-wyM3FghTkhmC+hQjyPGGFdpehrcX1KOXsDuERhfK2YbJemkUhEB+6wzEN639T21onxlfYBmriA1PFnvxTUhcKw==
+mobx@^6:
+  version "6.10.0"
+  resolved "https://registry.npmmirror.com/mobx/-/mobx-6.10.0.tgz#3537680fe98d45232cc19cc8f76280bd8bb6b0b7"
+  integrity sha512-WMbVpCMFtolbB8swQ5E2YRrU+Yu8iLozCVx3CdGjbBKlP7dFiCSuiG06uea3JCFN5DnvtAX7+G5Bp82e2xu0ww==
 
 ms@2.0.0:
   version "2.0.0"
