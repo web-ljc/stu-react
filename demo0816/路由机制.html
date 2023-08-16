@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navBox">
+        <a href="#/">首页</a>
+        <a href="#/product">产品</a>
+        <a href="#/people">个人</a>
+    </nav>
+    <div class="viewBox"></div>
+    <script>
+        /*
+            HASH路由
+                - 改变页面的哈希值，主页面是不会刷新的
+                - 根据不同的哈希值，让容器中渲染不同的内容
+        */
+        // 获取渲染容器
+        const viewBox = document.querySelector('.viewBox')
+        // 构建一个路由匹配表：重新加载页面、路由切换。都先到路由表中匹配，根据页面的哈希值，匹配出要渲染的内容（组件）
+        const routes = [
+            {
+                path: '/',
+                component: '首页'
+            },
+            {
+                path: '/product',
+                component: '产品'
+            },
+            {
+                path: '/people',
+                component: '个人'
+            },
+        ]
+        const routerMatch = () => {
+            let hash = location.hash.substring(1),
+                text = ''
+            routes.find(item => {
+                if(item.path.includes(hash)) {
+                    text = item.component
+                    return true
+                }
+            })
+            viewBox.innerHTML = text
+        }
+        // 默认展示首页信息，所以默认更改Hash值
+        location.hash = '/'
+        routerMatch()
+        // 监测hash值的变化，重新进行路由匹配
+        window.onhashchange = routerMatch
+    </script>
+</body>
+</html>

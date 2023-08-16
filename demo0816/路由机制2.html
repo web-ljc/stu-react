@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="root"></div>
+    <nav class="navBox">
+        <a href="/">首页</a>
+        <a href="/product">产品</a>
+        <a href="/people">个人</a>
+    </nav>
+    <div class="viewBox"></div>
+    <script>
+        /*
+            History路由{浏览器路由}
+                - 利用了H5中的History API来实现页面地址切换【页面地址切换，但不刷新页面】
+                - 根据不同的地址，到路由表中进行匹配，让容器中渲染不同内容
+            问题：切换地址在页面刷新的情况下是没有问题的，但如果页面刷新地址不存在回报404，需要服务器的配合，在地址不存在时返回主页内容
+        */
+        const viewBox = document.querySelector('.viewBox')
+        const navBox = document.querySelector('.navBox')
+
+        //点击A标签，不刷新页面切换地址，事件冒泡
+        navBox.onclick = (ev) => {
+            let target = ev.target
+            if (target.tagname === 'A') {
+                ev.preventDefault()
+                history.pushState({}, "", target.href)
+                routerMatch()
+            }
+        }
+
+        // 路由匹配方法
+        const routes = [
+            {
+                path: '/',
+                component: '首页'
+            },
+            {
+                path: '/product',
+                component: '产品'
+            },
+            {
+                path: '/people',
+                component: '个人'
+            },
+        ]
+        const routerMatch = () => {
+            let path = location.pathname,
+                text = ''
+            routes.find(item => {
+                if(item.path.includes(path)) {
+                    text = item.component
+                    return true
+                }
+            })
+            viewBox.innerHTML = text
+        }
+
+        // 默认展示首页
+        history.pushState({}, '', '/')
+        routerMatch()
+        // 监听onpopstate地址变化事件；
+        // 此事件执行go/back/forward等方法(或点击前进后退按钮)触发
+        // 执行pushState/replaceState等方法无法触发
+        window.onpopstate = routerMatch
+    </script>
+</body>
+</html>
