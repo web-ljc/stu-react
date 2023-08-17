@@ -2,14 +2,11 @@ import React from 'react'
 import { HashRouter, Link } from 'react-router-dom'
 import RouterView from './router'
 import routes from './router/routes'
+import HomeHead from './components/HomeHead'
 
 const App = () => {
     return <HashRouter>
-        <nav>
-            <Link to="/a">A</Link>
-            <Link to="/b">B</Link>
-            <Link to="/c">C</Link>
-        </nav>
+        <HomeHead />
         <div className="content">
             <RouterView routes={routes} />
         </div>

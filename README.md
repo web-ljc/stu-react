@@ -1183,7 +1183,7 @@
         - 基于ES6的Proxy做数据劫持，后期修改状态值，可以在STTER函数中做一些特殊处理，例如把依赖其值的监听器触发执行
         - 监听原始值需要使用observable.box处理
 
-    - @action 
+    - @action
         - 给事件绑定监听方法，让函数中的状态更改变为异步批处理
         - @action.bound：绑定函数执行this指向为store
 
@@ -1211,7 +1211,7 @@
     - HashRouter：基于<HashRouter>把所有要渲染的内容包起来，开启hash路由
         + 后续用到的<Route> <Link>等，都需要在HashRouter/BrowserRouter中使用
         + 开启后，整个页面地址会默认设置一个 #/哈希值
-    - Link： 实现路由切换/跳转的组件
+    - Link：实现路由切换/跳转的组件
         + 最后渲染完毕的结果依然是A标签
         + 它可以根据路由模式，自动设定点A切换的方式
     - Switch:确保路由中，只要有一项匹配，则不继续向下匹配
@@ -1223,6 +1223,60 @@
         - from:从哪个地址来
         - to：重定向地址
         - exact是对from地址的修饰，开启精准匹配
+
+2. 路由表管理机制
+    - 统一维护组件文件，进行函数处理为Route/Redirect格式
+
+3. 路由懒加载
+    - 引入lazy
+    - lazy(() => import(/*webpackChunkName:"AChild"*/'../views/A2'))
+    - 注释：/*webpackChunkName:"AChild"*/ 将多个组件打包在一起
+    - 必须要Suspense支持
+
+4. 获取路由对象信息
+    - 在react-router-dom中，基于Route路由匹配渲染的组件，路由会默认给每个组件传递三个属性
+        + history
+        + location
+        + match
+    - 可以通过props获取，也可以通过hook函数获取useHistory/useLocation/useRouteMatch
+
+    - 只要在HashRouter/BrowserRouter中渲染的组件：
+        - 我们在组件内部，可以基于useHistory/useLocation/useRouteMatch这些Hook函数，就可以获取history/location/match对象信息,即便这个组件不是基于Route渲染
+        - 函数组件基于Route匹配渲染
+            - 基于hook函数获取
+            - 基于props属性
+        - 函数组件不是基于Route匹配渲染
+            - 基于hook函数获取
+            - 基于withRouter代理组件，可以通过props属性获取
+        - 类组件基于Route匹配渲染
+            - 基于props属性
+        - 类组件不是基于Route匹配渲染
+            - 基于withRouter代理组件，可以通过props属性获取
+    
+    - 问题：如果当前组件是一个类组件，在HashRouter内，但是并没有经过Route匹配渲染，该如何获取三个对象信息？
+    - 解决方案：基于高阶组件，包裹一层进行处理。高阶组件通过hook获取属性，在传递给类组件
+    - 也可以使用 withRouter，原理就是高阶组件
+
+5. 路由跳转及传参方案
+    1. Link跳转
+        ```js
+            <Link to="/a" replace>导航</Link>
+            <Link to={{
+                pathname: '/a',
+                search:'',
+                state: {}
+            }} >导航</Link>
+        ```
+    2. 编程式导航
+        ```js
+            history.push('/a')
+            history.push({
+                pathname: '/a',
+                search:'',
+                state: {}
+            })
+        ```
+
 
 
 
