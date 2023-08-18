@@ -1266,6 +1266,13 @@
                 search:'',
                 state: {}
             }} >导航</Link>
+
+            const location = useLocation()
+            // 获取传递的问号参数信息
+            let {id, name} = qs.parse(location.search.substring(1))
+            // 基于URLSearchParams来处理、也存在安全和长度的限制
+            let usp = new URLSearchParams(location.search)
+            console.log(usp.get('id'));
         ```
     2. 编程式导航
         ```js
@@ -1276,7 +1283,36 @@
                 state: {}
             })
         ```
+    3. 路径参数【把需要传递的值，作为路由路径中的一部分】
+        - path: 'c/:id/:name?' 只有/c/100/ 这样地址可以匹配 ?是可以不传
+        ```js
+            history.push('/c/100/test')
 
+            // 获取路路径参数数据
+            const match = useRouteMatch()
+            console.log(match.params); //{id: '10', name: 'test'}
+            const params = useParams()
+            console.log(params); //{id: '10', name: 'test'}
+        ```
+    4. 隐式传参
+        ```js
+            history.push({
+                pathname: '/c',
+                state: {
+                    id: 100,
+                    name: 'test'
+                }
+            })
+            // 获取隐式传参
+            const location = useLocation()
+            console.log(location.state);
+        ```
 
+6. NavLink与Link的区别
+    - 都是实现路由跳转，语法几乎一样，区别：
+    - 每一次页面加载或路由切换完毕，都会拿最新的路由地址，和NavLink中to指定的地址【或pathname地址】进行匹配
+        - 匹配上会默认active选中样式类【可以基于activeClassName重新设置选中的样式类名】
+        - 也可以设置exact精准匹配
+    - 可以给选中导航设置相关的选中样式
 
 

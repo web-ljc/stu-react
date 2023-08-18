@@ -1,5 +1,5 @@
 import React from "react";
-import {Link, useHistory, useLocation, useRouteMatch, withRouter} from 'react-router-dom'
+import {Link, NavLink, useHistory, useLocation, useRouteMatch, withRouter} from 'react-router-dom'
 
 /*
     只要在HashRouter/BrowserRouter中渲染的组件：
@@ -16,10 +16,18 @@ import {Link, useHistory, useLocation, useRouteMatch, withRouter} from 'react-ro
 class HomeHead extends React.Component {
     render() {
         console.log(this.props);
+        {/* 
+            NavLink 与 Link
+                都是实现路由跳转，语法几乎一样，区别：
+                每一次页面加载或路由切换完毕，都会拿最新的路由地址，和NavLink中to指定的地址【或pathname地址】进行匹配
+                    - 匹配上会默认active选中样式类【可以基于activeClassName重新设置选中的样式类名】
+                    - 也可以设置exact精准匹配
+                可以给选中导航设置相关的选中样式
+        */}
         return <nav>
-                <Link to="/a">A</Link>
-                <Link to="/b">B</Link>
-                <Link to="/c">C</Link>
+                <NavLink to="/a" activeClassName="test">A</NavLink>
+                <NavLink to="/b">B</NavLink>
+                <NavLink to="/c">C</NavLink>
             </nav>
     }
 }

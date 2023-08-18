@@ -40,7 +40,7 @@ const routes = [
         children: [],
     },
     {
-        path: '/c',
+        path: '/c/:id?/:name?',
         name: 'c',
         component: lazy(() => import('../views/C')),
         meta: {},

@@ -1,12 +1,12 @@
 import React from 'react'
-import { Link, Route, Switch, Redirect } from 'react-router-dom'
+import { Link, NavLink, Route, Switch, Redirect } from 'react-router-dom'
 import RouterView from '../router'
 import aRoutes from '../router/aRoutes'
 
 const A = () => {
     return <div className='box'>
         <div className="menu">
-            <Link to="/a/a1">A1</Link>
+            <NavLink to="/a/a1">A1</NavLink>
             <Link to="/a/a2">A2</Link>
             <Link to="/a/a3">A3</Link>
         </div>
