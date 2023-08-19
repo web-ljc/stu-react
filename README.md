@@ -1266,13 +1266,6 @@
                 search:'',
                 state: {}
             }} >导航</Link>
-
-            const location = useLocation()
-            // 获取传递的问号参数信息
-            let {id, name} = qs.parse(location.search.substring(1))
-            // 基于URLSearchParams来处理、也存在安全和长度的限制
-            let usp = new URLSearchParams(location.search)
-            console.log(usp.get('id'));
         ```
     2. 编程式导航
         ```js
@@ -1283,30 +1276,40 @@
                 state: {}
             })
         ```
-    3. 路径参数【把需要传递的值，作为路由路径中的一部分】
-        - path: 'c/:id/:name?' 只有/c/100/ 这样地址可以匹配 ?是可以不传
-        ```js
-            history.push('/c/100/test')
+        - 问号传参
+            - search
+            ```js
+                const location = useLocation()
+                // 获取传递的问号参数信息
+                let {id, name} = qs.parse(location.search.substring(1))
+                // 基于URLSearchParams来处理、也存在安全和长度的限制
+                let usp = new URLSearchParams(location.search)
+                console.log(usp.get('id'));
+            ```
+        - 路径参数【把需要传递的值，作为路由路径中的一部分】
+            - path: 'c/:id/:name?' 只有/c/100/ 这样地址可以匹配 ?是可以不传
+            ```js
+                history.push('/c/100/test')
 
-            // 获取路路径参数数据
-            const match = useRouteMatch()
-            console.log(match.params); //{id: '10', name: 'test'}
-            const params = useParams()
-            console.log(params); //{id: '10', name: 'test'}
-        ```
-    4. 隐式传参
-        ```js
-            history.push({
-                pathname: '/c',
-                state: {
-                    id: 100,
-                    name: 'test'
-                }
-            })
-            // 获取隐式传参
-            const location = useLocation()
-            console.log(location.state);
-        ```
+                // 获取路路径参数数据
+                const match = useRouteMatch()
+                console.log(match.params); //{id: '10', name: 'test'}
+                const params = useParams()
+                console.log(params); //{id: '10', name: 'test'}
+            ```
+        - 隐式传参
+            ```js
+                history.push({
+                    pathname: '/c',
+                    state: {
+                        id: 100,
+                        name: 'test'
+                    }
+                })
+                // 获取隐式传参
+                const location = useLocation()
+                console.log(location.state);
+            ```
 
 6. NavLink与Link的区别
     - 都是实现路由跳转，语法几乎一样，区别：
@@ -1316,3 +1319,72 @@
     - 可以给选中导航设置相关的选中样式
 
 
+##### 84
+1. routerV6
+    - 所有匹配规则放在Routes中
+        + 路由匹配成功，不再基于component/render控制渲染组件，而是基于element，语法格式是<Component>
+        + 不再需要Switch，默认就是一个匹配成功，不再匹配下面的
+        + 不再需要exact，默认每一项匹配就是精准匹配
+    - 原有Redirect操作，被 <Navigate to="/a" /> 代替
+        + 遇到<Navigate />组件，路由就会跳转，跳转到to指定的路由地址
+        + 设置replace属性，不会新增记录，替换现有记录
+        + to的值可以设置为一个对象，pathname需要跳转地址，search问号传参
+    - 多级路由：不在分散到各个组件中编写，统一写在一起处理
+        + 组件中导入Outlet渲染
+    
+2. 路由跳转
+    - 在react-router-dom V6中，即便当前组件是基于<Route>匹配渲染得，也不会基于属性，把history/location/match传递给组件，想获取相关信息，只能基于Hook函数处理
+        + 首先要确保需要使用路由Hook的组件，是在Router【HashRouter或BrowserRouter】内部，否则使用这些Hook会报错
+        + 只要在<Router>内包裹的组件，不论是否基于<Router>匹配渲染的
+            + 默认都不可能再基于props获取相关的对象信息
+            + 只能基于路由Hook去获取
+    
+    - 为了在类组件中也可以获取路由的相关信息：
+        1. 在构建路由表时，继续让基于<Route>匹配渲染的组件，可以基于属性获取需要的信息
+        2. 不是基于<Route>匹配渲染的组件，需要自己重写withRouter，让其和基于<Route>匹配渲染的组件，具备相同属性
+
+    - 在react-router-dom V6中，实现路由跳转的方式
+        + <Link/NavLink to='/a'> 点击跳转路由
+        + <Navigate to='/a'> 遇到这个组件就会跳转
+        + 编程式导航
+            ```js
+                import {useNavigate} from 'react-router-dom'
+                const navigate = useNavigate()
+                // 问号传参
+                navigate('/c')
+                navigate('/c', {replace: true})
+                navigate({
+                    pathname: '/c',
+                    search: '?id=10'
+                })
+                // 获取参数
+                const {search} = useLocation()
+                const sup = new URLSearchParams(search)
+                sup.get('id')
+                const [sup1] = useSearchParams()
+                sup1.get('id')
+
+                // 路径传参
+                navigate('/c/100')
+                // 获取参数
+                const match = useParams()
+
+                // 隐式传参，页面刷新也存在
+                navigate('/c', {
+                    replace: true,
+                    state: {
+                        id: 1000
+                    }
+                })
+                // 获取参数
+                const {state} = useLocation()
+            ```
+    
+    - 常用的路由
+        - useNavigate -- 代替5中的useHistory:实现编程导航
+        - useLocation -- 5中也有，获取location对象信息，pathname/search/state...
+        - useSearchParams -- 新增，获取问号传递参数信息，获取的结果是一个URLSearchParams对象
+        - useParams-- 5中也有，获取路径参数匹配的信息
+        - useMatch(pathname) -- 代替5中useRouteMatch，可以基于params获取路径参数信息，但是在6中这个Hook需要我们自己传递值，且params没有获取匹配信息，用的少
+
+3. 
