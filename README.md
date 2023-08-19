@@ -1387,4 +1387,16 @@
         - useParams-- 5中也有，获取路径参数匹配的信息
         - useMatch(pathname) -- 代替5中useRouteMatch，可以基于params获取路径参数信息，但是在6中这个Hook需要我们自己传递值，且params没有获取匹配信息，用的少
 
-3. 
+3. 路由表及统一管理
+    - 统一渲染组件：可以做权限、登录状态校验，传递属性
+    - 递归创建Router
+    - 路由容器
+    - 创建withRouter
+
+    - 路由跳转及传参属性方法封装
+        - 函数组件基于Route匹配渲染：可以基于props获取路由信息，也可以使用Hook函数获取
+        - 类组件基于Route匹配渲染：可以基于props获取路由信息
+        - 函数组件不是Route匹配渲染：可以使用Hook函数获取，也可以使用withRouter
+        - 类组件不是Route匹配渲染：使用withRouter
+    
+    - useRoutes([]) 传入路由数据，返回虚拟DOM，节省了循环动态创建Route的操作

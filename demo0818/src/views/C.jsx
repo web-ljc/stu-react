@@ -1,7 +1,7 @@
 import React from "react";
 import {useLocation, useSearchParams, useParams} from 'react-router-dom'
 
-const C = () => {
+const C = (props) => {
     const {search, pathname, state} = useLocation()
     const sup = new URLSearchParams(search)
     const [sup1] = useSearchParams()
@@ -10,7 +10,7 @@ const C = () => {
     const match = useParams()
     console.log(match);
 
-    console.log(state);
+    console.log(state, props.location.state);
 
     return <div className="box">
         C组件内容

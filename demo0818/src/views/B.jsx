@@ -4,7 +4,8 @@ import qs from 'qs'
 
 const B = (props) => {
     const location = useLocation()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
+    const {navigate} = props
     const handle = () => {
         // 问号传参
         // navigate('/c', {replace: true})

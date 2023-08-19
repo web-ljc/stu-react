@@ -1,8 +1,10 @@
 import React from "react";
 import {Link, useLocation} from "react-router-dom"
+import {withRouter} from '../router/index'
 
-const HomeHead = () => {
+const HomeHead = (props) => {
     // console.log(useLocation());
+    console.log(props);
     return <div>
         <Link to="/a">A</Link>
         <Link to="/b">B</Link>
@@ -10,4 +12,4 @@ const HomeHead = () => {
     </div>
 }
 
-export default HomeHead
+export default withRouter(HomeHead)
