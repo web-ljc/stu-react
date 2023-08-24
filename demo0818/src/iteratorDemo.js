@@ -87,9 +87,10 @@ Object.prototype[Symbol.iterator] = function() {
         }
     }
 }
-for (let val2 of obj2) {
-    console.log(val2);
-}
+// console.log(obj2);
+// for (let val2 of obj2) {
+//     console.log(val2);
+// }
 
 
 // 如果是类数组，可以直接借用类数组原型上的Symbol.iterator方法

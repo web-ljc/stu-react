@@ -64,5 +64,7 @@
         + ...
     - 纯粹对象、或自己构建的类数组对象。默认不具备Symbol.iterator 属性，不具备迭代器规范，【不能直接使用for/of循环】
     
-
+2. generator
+    - 生成器对象是由一个generator function返回的，并且它符合可迭代协议和迭代器协议
+    
 

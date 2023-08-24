@@ -21,7 +21,7 @@ const reducer = (state, action) => {
 
 const A1 = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
-    console.log(state, 99);
+    // console.log(state, 99);
     return <div className="box">
         <span>{state.num}</span>
         <br />
