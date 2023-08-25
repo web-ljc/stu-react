@@ -1239,6 +1239,7 @@
     - 引入lazy
     - lazy(() => import(/*webpackChunkName:"AChild"*/'../views/A2'))
     - 注释：/*webpackChunkName:"AChild"*/ 将多个组件打包在一起
+    - 注释：/*webpackPrefetch:true*/ 浏览器在空间时加载
     - 必须要Suspense支持
 
 4. 获取路由对象信息
