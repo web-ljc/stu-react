@@ -1,8 +1,23 @@
-### 吃透React
 1. 版本
+### 吃透React
     - 16版本：项目用的最多
     - 17版本：语法没变，底层机制变了
     - 18版本：新版本[语法和机制上都有区别]
+
+##### Vue与React的区别
+- 相同
+    1. 都是数据驱动视图，更改数据重新渲染视图，只关注数据变化
+    2. 都遵循组件化思想
+    3. 都使用virtualDOM + diff算法，进行优化渲染
+
+- 不同
+    1. 采用架构体系不同，Vue是MVVM，React是MVC
+    3. 组件写法不同，vue是template单文件组格式，react是jsx语法，将HTML、CSS全写进JS中
+    2. 数据流不同，Vue是双向绑定数据响应式，React是单向数据流通过diff算法
+    4. 响应式原理不同，Vue通过Object.defineProperty对数据进行劫持，React通过比较引用方式进行，
+    5. diff算法不同，vue双指针+乱序，React进行排序对比，映射对比
+    5. 渲染过程不同，Vue是渲染过程中会跟踪组件的依赖关系，不需要重新渲染组件，
+        react状态改变时，全部子组件重新渲染，通过shouldComponentUpdate生命周期可以控制。
 
 ##### 04
 2. React框架采用的是MVC体系，Vue框架采用的是MVVM体系
@@ -442,7 +457,7 @@
         this.xxx = React.createRef() // => {current:null}
         设置：<h2 className="title" ref = {ref对象}>温馨提示</h2>
         获取：this.xxx.current
-    
+
     4. 原理：在render渲染的时候，会获取vituralDOM的ref属性
         + 如果属性值是一个字符串，会给this.refs增加这样一个成员，成员值就是当前的DOM元素
         + 如果属性值是一个函数，会执行函数，把当前DO元素传递给这个函数【x - DOM元素】，而在函数执行的内部，一般会把DOM元素直接挂在实例的某个属性上
